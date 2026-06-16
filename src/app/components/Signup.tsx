@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 export function Signup() {
   const navigate = useNavigate();
@@ -13,6 +14,10 @@ export function Signup() {
   }, [auth.token, navigate]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const passwordsMatch = confirmPassword === "" || password === confirmPassword;
   const [monthlyAllowance, setMonthlyAllowance] = useState("30000");
   const [feedingBudget, setFeedingBudget] = useState("15000");
   const [allowancePeriod, setAllowancePeriod] = useState("monthly");
@@ -38,6 +43,10 @@ export function Signup() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
     setError(null);
     setLoading(true);
     const success = await auth.signup({
@@ -76,15 +85,64 @@ export function Signup() {
             />
           </label>
 
-          <label className="block">
+          <label className="block relative">
             <span className="text-sm text-muted-foreground">Password</span>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              className="mt-2 w-full rounded-2xl border border-gray-200 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 pr-12"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-10 text-gray-500"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </label>
+
+          <label className="block">
+            <span className="text-sm text-muted-foreground">Confirm Password</span>
+            <div className="relative mt-2">
+              <input
+                type={showConfirm ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`w-full rounded-2xl border px-4 py-3 pr-12 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 transition-colors ${
+                  passwordsMatch
+                    ? "border-gray-200 dark:border-gray-600 focus:ring-[#0B6623]"
+                    : "border-red-400 dark:border-red-500 focus:ring-red-400"
+                }`}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(v => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                tabIndex={-1}
+                aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+              >
+                {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {!passwordsMatch && (
+              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Passwords do not match
+              </p>
+            )}
+            {passwordsMatch && confirmPassword !== "" && (
+              <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                Passwords match
+              </p>
+            )}
           </label>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -169,15 +227,15 @@ export function Signup() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full rounded-2xl bg-[#0B6623] px-4 py-3 text-white hover:bg-[#0B6623]/90 transition-colors"
+            disabled={loading || !passwordsMatch || confirmPassword === ""}
+            className="w-full rounded-2xl bg-[#0B6623] px-4 py-3 text-white hover:bg-[#0B6623]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <p className="text-sm text-muted-foreground mt-6 text-center">
-          Already have an account? <Link to="/login" className="font-semibold text-[#0B6623] dark:text-emerald-400 dark:text-emerald-400">Sign in</Link>
+          Already have an account? <Link to="/login" className="font-semibold text-[#0B6623] dark:text-emerald-400">Sign in</Link>
         </p>
       </div>
     </div>

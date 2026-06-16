@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { cardLg, input, btnPrimary, linkBrand, page, subtitle, muted } from "../utils/darkClasses";
+import { Eye, EyeOff } from "lucide-react";
 
 export function Login() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,9 +45,18 @@ export function Login() {
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={`mt-2 ${input}`} required />
           </label>
 
-          <label className="block">
+          <label className="block relative">
             <span className={`text-sm ${muted}`}>Password</span>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className={`mt-2 ${input}`} required />
+            <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className={`mt-2 pr-12 ${input}`} required />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 mt-[9px] text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </label>
 
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
