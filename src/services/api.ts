@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "https://eagle-purse-backend.vercel.app/";
+const BASE_URL = import.meta.env.VITE_API_URL || "https://eagle-purse-backend.onrender.com";
 
 function getAuthHeaders() {
   const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
@@ -21,7 +21,7 @@ async function handleResponse(response: Response) {
 
 export async function login(email: string, password: string) {
   try {
-    const response = await fetch(`${BASE_URL}/auth/login`, {
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export async function signup(data: {
   meal_times?: string[];
 }) {
   try {
-    const response = await fetch(`${BASE_URL}/auth/signup`, {
+    const response = await fetch(`${BASE_URL}/api/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export async function signup(data: {
 
 export async function getBudgetSummary() {
   try {
-    const response = await fetch(`${BASE_URL}/budget/summary`, {
+    const response = await fetch(`${BASE_URL}/api/budget/summary`, {
       headers: {
         ...getAuthHeaders(),
       },
@@ -76,7 +76,7 @@ export async function getBudgetSummary() {
 
 export async function postAutoAdjust() {
   try {
-    const response = await fetch(`${BASE_URL}/budget/auto-adjust`, {
+    const response = await fetch(`${BASE_URL}/api/budget/auto-adjust`, {
       method: "POST",
       headers: {
         ...getAuthHeaders(),
@@ -91,7 +91,7 @@ export async function postAutoAdjust() {
 
 export async function getMealPlan() {
   try {
-    const response = await fetch(`${BASE_URL}/coach/meal-plan`, {
+    const response = await fetch(`${BASE_URL}/api/coach/meal-plan`, {
       headers: getAuthHeaders(),
     });
     return await handleResponse(response);
@@ -106,7 +106,7 @@ export async function postCoachAdvice(
   chatHistory: { role: string; content: string }[] = []
 ) {
   try {
-    const response = await fetch(`${BASE_URL}/coach/advice`, {
+    const response = await fetch(`${BASE_URL}/api/coach/advice`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export async function postCoachAdvice(
 
 export async function getProfile() {
   try {
-    const response = await fetch(`${BASE_URL}/profile`, {
+    const response = await fetch(`${BASE_URL}/api/profile`, {
       headers: getAuthHeaders(),
     });
     return await handleResponse(response);
@@ -138,7 +138,7 @@ export async function getProfile() {
 
 export async function applyAutoAdjustPlan(newDailyLimit: number) {
   try {
-    const response = await fetch(`${BASE_URL}/budget/apply-plan`, {
+    const response = await fetch(`${BASE_URL}/api/budget/apply-plan`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -155,7 +155,7 @@ export async function applyAutoAdjustPlan(newDailyLimit: number) {
 
 export async function updateProfile(data: any) {
   try {
-    const response = await fetch(`${BASE_URL}/profile/update`, {
+    const response = await fetch(`${BASE_URL}/api/profile/update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -178,7 +178,7 @@ export async function addExpense(data: {
   date: string;
 }) {
   try {
-    const response = await fetch(`${BASE_URL}/transactions/add`, {
+    const response = await fetch(`${BASE_URL}/api/transactions/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -195,7 +195,7 @@ export async function addExpense(data: {
 
 export async function resetCycle() {
   try {
-    const response = await fetch(`${BASE_URL}/budget/reset-cycle`, {
+    const response = await fetch(`${BASE_URL}/api/budget/reset-cycle`, {
       method: "POST",
       headers: {
         ...getAuthHeaders(),
@@ -210,7 +210,7 @@ export async function resetCycle() {
 
 export async function resetAllExpenses() {
   try {
-    const response = await fetch(`${BASE_URL}/budget/reset-transactions`, {
+    const response = await fetch(`${BASE_URL}/api/budget/reset-transactions`, {
       method: "POST",
       headers: {
         ...getAuthHeaders(),
