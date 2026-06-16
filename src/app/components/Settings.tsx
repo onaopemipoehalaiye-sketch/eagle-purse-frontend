@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Label } from "@radix-ui/react-label";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2, MapPin } from "lucide-react";
 import { getProfile, updateProfile, resetAllExpenses } from "../../services/api";
+import { useOnboardingTour } from "../hooks/useOnboardingTour";
 
 export function Settings() {
   const [allowance, setAllowance] = useState("");
   const [allowancePeriod, setAllowancePeriod] = useState("monthly");
   const [feedingBudget, setFeedingBudget] = useState("");
+  const { startTour } = useOnboardingTour();
 
   const [dietaryPref, setDietaryPref] = useState("");
   const [mealTimes, setMealTimes] = useState<string[]>([]);
@@ -202,6 +204,18 @@ export function Settings() {
           >
             <Trash2 className="w-5 h-5" />
             Reset All Expenses
+          </button>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 p-6 space-y-3">
+          <h3 className="text-lg text-foreground mb-2">App Tour</h3>
+          <p className="text-sm text-muted-foreground">Replay the interactive guided tour to re-learn any part of the app.</p>
+          <button
+            onClick={startTour}
+            className="w-full py-3 border-2 border-[#0B6623] text-[#0B6623] dark:text-emerald-400 dark:border-emerald-400 rounded-2xl hover:bg-[#0B6623]/10 transition-colors flex items-center justify-center gap-2"
+          >
+            <MapPin className="w-5 h-5" />
+            Replay App Tour
           </button>
         </div>
 

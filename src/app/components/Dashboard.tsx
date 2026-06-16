@@ -123,6 +123,7 @@ export function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <motion.div 
+            id="budget-gauge"
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
             transition={{ delay: 0.1 }}

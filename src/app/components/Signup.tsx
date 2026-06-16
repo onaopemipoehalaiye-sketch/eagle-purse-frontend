@@ -12,6 +12,7 @@ export function Signup() {
       navigate("/dashboard", { replace: true });
     }
   }, [auth.token, navigate]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,7 +29,7 @@ export function Signup() {
   const [error, setError] = useState<string | null>(null);
 
   const handleMealTimeToggle = (time: string) => {
-    setMealTimes(prev => 
+    setMealTimes(prev =>
       prev.includes(time) ? prev.filter(t => t !== time) : [...prev, time]
     );
   };
@@ -61,6 +62,8 @@ export function Signup() {
     });
     setLoading(false);
     if (success) {
+      // Flag the tour to start on first dashboard load
+      localStorage.setItem("showTour", "true");
       navigate("/dashboard");
     } else {
       setError("Signup failed. Please try again.");
@@ -85,26 +88,33 @@ export function Signup() {
             />
           </label>
 
-          <label className="block relative">
+          {/* Password field */}
+          <label className="block">
             <span className="text-sm text-muted-foreground">Password</span>
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 pr-12"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-10 text-gray-500"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
+            <div className="relative mt-2">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-2xl border border-gray-200 dark:border-gray-600 px-4 py-3 pr-12 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0B6623]"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </label>
 
+          {/* Confirm password field */}
           <label className="block">
-            <span className="text-sm text-muted-foreground">Confirm Password</span>
+            <span className="text-sm text-muted-foreground">Confirm password</span>
             <div className="relative mt-2">
               <input
                 type={showConfirm ? "text" : "password"}
@@ -120,7 +130,7 @@ export function Signup() {
               <button
                 type="button"
                 onClick={() => setShowConfirm(v => !v)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
                 tabIndex={-1}
                 aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
               >
@@ -156,7 +166,6 @@ export function Signup() {
                 required
               />
             </label>
-
             <label className="block">
               <span className="text-sm text-muted-foreground">Feeding budget</span>
               <input

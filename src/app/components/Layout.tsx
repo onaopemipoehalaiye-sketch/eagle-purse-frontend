@@ -3,12 +3,14 @@ import { Home, PlusCircle, MessageCircle, Utensils, Settings as SettingsIcon, Su
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useOnboardingTour } from "../hooks/useOnboardingTour";
 
 export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const auth = useAuth();
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { startTour } = useOnboardingTour();
 
   const isOnboarding = false;
 
@@ -22,10 +24,19 @@ export function Layout() {
   }, []);
 
   useEffect(() => {
-    if (auth.token === null && !["/login", "/signup"].includes(location.pathname)) {
+    if (auth.token === null && !["/login", "/signup", "/"].includes(location.pathname)) {
       navigate("/login", { replace: true });
     }
   }, [auth.token, location.pathname, navigate]);
+
+  // Fire onboarding tour once after signup
+  useEffect(() => {
+    if (localStorage.getItem("showTour") === "true") {
+      localStorage.removeItem("showTour");
+      const timer = setTimeout(() => startTour(), 900);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -37,11 +48,11 @@ export function Layout() {
   };
 
   const navItems = [
-    { path: "/dashboard", icon: Home, label: "Home" },
-    { path: "/log-expense", icon: PlusCircle, label: "Log Expense" },
-    { path: "/coach", icon: MessageCircle, label: "Coach" },
-    { path: "/meal-plan", icon: Utensils, label: "Meal Plan" },
-    { path: "/settings", icon: SettingsIcon, label: "Settings" },
+    { path: "/dashboard", icon: Home, label: "Home", id: "nav-home" },
+    { path: "/log-expense", icon: PlusCircle, label: "Log Expense", id: "nav-log-expense" },
+    { path: "/coach", icon: MessageCircle, label: "Coach", id: "nav-coach" },
+    { path: "/meal-plan", icon: Utensils, label: "Meal Plan", id: "nav-meal-plan" },
+    { path: "/settings", icon: SettingsIcon, label: "Settings", id: "nav-settings" },
   ];
 
   return (
@@ -64,11 +75,12 @@ export function Layout() {
           </div>
           <nav className="flex-1 p-4">
             <ul className="space-y-2">
-              {navItems.map(({ path, icon: Icon, label }) => {
+              {navItems.map(({ path, icon: Icon, label, id }) => {
                 const isActive = location.pathname === path;
                 return (
                   <li key={path}>
                     <button
+                      id={id}
                       onClick={() => navigate(path)}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                         isActive
@@ -154,11 +166,12 @@ export function Layout() {
                 </button>
               </div>
               <div className="flex justify-around items-center flex-1 gap-1">
-                {navItems.map(({ path, icon: Icon, label }) => {
+                {navItems.map(({ path, icon: Icon, label, id }) => {
                   const isActive = location.pathname === path;
                   return (
                     <motion.button
                       key={path}
+                      id={id}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => navigate(path)}
                       className={`flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-lg transition-colors relative ${
